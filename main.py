@@ -1,7 +1,7 @@
 from fastapi import Request, FastAPI
 from starlette import asynccontextmanager
 from starlette.middleware.sessions import SessionMiddleware
-from yandexid import AsyncYandexOAuth
+from yandexid import AsyncYandexOAuth, YandexID
 
 yandex_oauth = AsyncYandexOAuth(
     client_id="",
@@ -38,11 +38,14 @@ async def auth(request: Request, code: str | None = None, error: str | None = No
 
         access_token = token_response.access_token
         refresh_token = token_response.refresh_token
+        yandex_user = YandexID(access_token)
+        user_info = yandex_user.get_user_info_json()
 
         return {
             "status": "Success",
             "access_token": access_token,
-            "refresh_token": refresh_token
+            "refresh_token": refresh_token,
+            "user_info": user_info
         }
     except Exception as e:
         return {"status": "Auth failed", "detail": str(e)}
