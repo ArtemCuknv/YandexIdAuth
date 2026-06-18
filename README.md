@@ -14,9 +14,23 @@ yandex_oauth = AsyncYandexOAuth(
 )
 ```
 
+### Linux/Mac
+```
+python -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+python3 main.py
+```
+### Windows
+```
+pip install -r requirements.txt
+python main.py
+```
+
 ## Используемые библиотеки
 
 yandexid - https://github.com/LulzLoL231/YandexID
+
 fastapi - https://fastapi.tiangolo.com/ru/tutorial/
 
 ## HELP

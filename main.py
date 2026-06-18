@@ -1,7 +1,10 @@
 from fastapi import Request, FastAPI
-from starlette import asynccontextmanager
+from fastapi.responses import RedirectResponse
+
+from contextlib import asynccontextmanager
 from starlette.middleware.sessions import SessionMiddleware
 from yandexid import AsyncYandexOAuth, YandexID
+import uvicorn
 
 yandex_oauth = AsyncYandexOAuth(
     client_id="",
@@ -11,12 +14,14 @@ yandex_oauth = AsyncYandexOAuth(
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print('start')
+    "Тут можно инициализировать пулл соеденения с дб"
     yield
     print('end')
+    "А тут закрывать"
 
 app = FastAPI()
 
-secret_key = "CHANGE_ME_TO_RANDOM_LONG_SECRET"
+secret_key = "CHANGE_ME_TO_RANDOM_LONG_SECRET" #ОБЯЗАТЕЛЬНО ПОМЕНЯТЬ!!!
 app.add_middleware(SessionMiddleware, secret_key=secret_key)
 
 @app.get("/")
@@ -45,7 +50,11 @@ async def auth(request: Request, code: str | None = None, error: str | None = No
             "status": "Success",
             "access_token": access_token,
             "refresh_token": refresh_token,
+            "user_id": user_info.id,
             "user_info": user_info
         }
     except Exception as e:
         return {"status": "Auth failed", "detail": str(e)}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True) # reload можно убрать
